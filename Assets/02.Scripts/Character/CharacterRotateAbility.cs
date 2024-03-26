@@ -1,6 +1,8 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class CharacterRotateAbility : CharacterAbility
 {
@@ -10,8 +12,17 @@ public class CharacterRotateAbility : CharacterAbility
     private float _mx;
     private float _my;
 
+    private void Start()
+    {
+        GameObject.FindWithTag("FollowCamera").GetComponent<CinemachineVirtualCamera>().Follow = CameraRoot;
+    }
+
     private void Update()
     {
+        if (!_owner._photonView.IsMine == false)
+        {
+            return;
+        }
         // 순서
         // 1. 마우스 입력 값을 받는다.
         float mouseX = Input.GetAxis("Mouse X");
@@ -24,4 +35,6 @@ public class CharacterRotateAbility : CharacterAbility
         transform.eulerAngles = new Vector3(0, _mx, 0);
         CameraRoot.localEulerAngles = new Vector3(-_my, 0 , 0);
     }
+
+
 }

@@ -1,4 +1,7 @@
+using Photon.Pun;
 using UnityEngine;
+using UnityEngine.UI;
+using static UnityEngine.UI.GridLayoutGroup;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
@@ -13,11 +16,16 @@ public class CharacterMoveAbility : CharacterAbility
     {
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
-        
+        Owner.Stat.Stamina = Owner.Stat.MaxStamina;
     }
 
+    private PhotonView _photonView;
     private void Update()
     {
+        if (!_owner._photonView.IsMine == false)
+        {
+            return;
+        }
         // 순서
         // 1. 사용자의 키보드 입력을 받는다.
         float h = Input.GetAxisRaw("Horizontal");
@@ -33,8 +41,36 @@ public class CharacterMoveAbility : CharacterAbility
         // 4. 중력 적용하세요.
         dir.y = -1f;
 
+
         // 3. 이동속도에 따라 그 방향으로 이동한다.
         _characterController.Move(dir * (Owner.Stat.MoveSpeed * Time.deltaTime));
-        
+
+        if (Input.GetKey(KeyCode.LeftShift) && Owner.Stat.Stamina > 0)
+        {
+            _characterController.Move(dir * (Owner.Stat.RunSpeed * Time.deltaTime));
+            Owner.Stat.Stamina -= Owner.Stat.StaminaConsumeSpeed * Time.deltaTime;
+
+            // 스태미나가 0보다 작아지지 않도록 처리
+            if (Owner.Stat.Stamina < 0)
+            {
+                Owner.Stat.Stamina = 0;
+            }
+        }
+        else
+        {
+            
+            if (Owner.Stat.Stamina >= 0 && !Input.GetKey(KeyCode.LeftShift))
+            {
+               
+                Owner.Stat.Stamina += Owner.Stat.StaminaChargeSpeed * Time.deltaTime;
+                
+                _characterController.Move(dir * (Owner.Stat.MoveSpeed * Time.deltaTime));
+                
+            }
+
+            
+            Owner.Stat.Stamina = Mathf.Clamp(Owner.Stat.Stamina, 0, 100);
+        }
+
     }
 }

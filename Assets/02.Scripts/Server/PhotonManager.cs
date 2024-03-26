@@ -82,6 +82,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks // PUN의 다양한 서�
         Debug.Log($"RoomName: {PhotonNetwork.CurrentRoom.Name}");
         Debug.Log($"PlayerCount: {PhotonNetwork.CurrentRoom.PlayerCount}");
         Debug.Log($"MaxCount: {PhotonNetwork.CurrentRoom.MaxPlayers}");
+
+        PhotonNetwork.Instantiate("Character", Vector3.zero, Quaternion.identity);
     }
 
     // 방 생성에 실패했을 때 호출되는 콜백 함수

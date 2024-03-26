@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,5 +8,12 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterRotateAbility))]
 public class Character : MonoBehaviour
 {
+    public PhotonView PhotonView { get; private set; }
     public Stat Stat;
+
+    private void Start()
+    {
+        Stat.Init();
+    }
+    
 }

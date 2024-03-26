@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class CharacterAttackAbility : CharacterAbility
 {
@@ -15,6 +17,7 @@ public class CharacterAttackAbility : CharacterAbility
 
     private Animator _animator;
     private float _attackTimer = 0;
+    
 
     private void Start()
     {
@@ -23,13 +26,20 @@ public class CharacterAttackAbility : CharacterAbility
 
     private void Update()
     {
+        if (!_owner._photonView.IsMine == false)
+        {
+            return;
+        }
         _attackTimer += Time.deltaTime;
 
-        if (Input.GetMouseButtonDown(0) && _attackTimer >= Owner.Stat.AttackCoolTime)
+        if (Input.GetMouseButtonDown(0) && _attackTimer >= Owner.Stat.AttackCoolTime && Owner.Stat.Stamina > Owner.Stat.AttackStamina)
         {
+            Owner.Stat.Stamina -= Owner.Stat.StaminaConsumeSpeed * Owner.Stat.AttackConsumeSpeed;
+
             _attackTimer = 0f;
 
             _animator.SetTrigger($"Attack{UnityEngine.Random.Range(1, 4)}");
+
         }
     }
 }
