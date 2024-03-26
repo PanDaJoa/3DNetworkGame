@@ -16,13 +16,12 @@ public class CharacterMoveAbility : CharacterAbility
     {
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
-        Owner.Stat.Stamina = Owner.Stat.MaxStamina;
     }
 
     private PhotonView _photonView;
     private void Update()
     {
-        if (!_owner._photonView.IsMine == false)
+        if (!_owner.PhotonView.IsMine)
         {
             return;
         }
@@ -43,34 +42,24 @@ public class CharacterMoveAbility : CharacterAbility
 
 
         // 3. 이동속도에 따라 그 방향으로 이동한다.
-        _characterController.Move(dir * (Owner.Stat.MoveSpeed * Time.deltaTime));
-
-        if (Input.GetKey(KeyCode.LeftShift) && Owner.Stat.Stamina > 0)
+        float moveSpeed = _owner.Stat.MoveSpeed;
+        if (Input.GetKey(KeyCode.LeftShift) && _owner.Stat.Stamina > 0)
         {
-            _characterController.Move(dir * (Owner.Stat.RunSpeed * Time.deltaTime));
-            Owner.Stat.Stamina -= Owner.Stat.StaminaConsumeSpeed * Time.deltaTime;
-
-            // 스태미나가 0보다 작아지지 않도록 처리
-            if (Owner.Stat.Stamina < 0)
-            {
-                Owner.Stat.Stamina = 0;
-            }
+            moveSpeed = _owner.Stat.RunSpeed;
+            _owner.Stat.Stamina -= Time.deltaTime * _owner.Stat.RunConsumeStamina;
         }
         else
         {
-            
-            if (Owner.Stat.Stamina >= 0 && !Input.GetKey(KeyCode.LeftShift))
+            _owner.Stat.Stamina += Time.deltaTime * _owner.Stat.RecoveryStamina;
+            if (_owner.Stat.Stamina >= _owner.Stat.MaxStamina)
             {
-               
-                Owner.Stat.Stamina += Owner.Stat.StaminaChargeSpeed * Time.deltaTime;
-                
-                _characterController.Move(dir * (Owner.Stat.MoveSpeed * Time.deltaTime));
-                
+                _owner.Stat.Stamina = _owner.Stat.MaxStamina;
             }
-
-            
-            Owner.Stat.Stamina = Mathf.Clamp(Owner.Stat.Stamina, 0, 100);
         }
 
+        // 4. 이동속도에 따라 그 방향으로 이동한다.
+        _characterController.Move(dir * (moveSpeed * Time.deltaTime));
     }
+
 }
+

@@ -15,8 +15,8 @@ public class Stat
 
     public float Stamina;
     public int MaxStamina;
-    public int StaminaChargeSpeed;
-    public int StaminaConsumeSpeed;
+    public int RecoveryStamina;
+    public int RunConsumeStamina;
 
     public float RotationSpeed;
 

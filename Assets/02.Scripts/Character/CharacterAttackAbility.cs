@@ -26,15 +26,15 @@ public class CharacterAttackAbility : CharacterAbility
 
     private void Update()
     {
-        if (!_owner._photonView.IsMine == false)
+        if (!_owner.PhotonView.IsMine)
         {
             return;
         }
         _attackTimer += Time.deltaTime;
 
-        if (Input.GetMouseButtonDown(0) && _attackTimer >= Owner.Stat.AttackCoolTime && Owner.Stat.Stamina > Owner.Stat.AttackStamina)
+        if (Input.GetMouseButtonDown(0) && _attackTimer >= _owner.Stat.AttackCoolTime && _owner.Stat.Stamina > _owner.Stat.AttackStamina)
         {
-            Owner.Stat.Stamina -= Owner.Stat.StaminaConsumeSpeed * Owner.Stat.AttackConsumeSpeed;
+            _owner.Stat.Stamina -= _owner.Stat.RunConsumeStamina * _owner.Stat.AttackConsumeSpeed;
 
             _attackTimer = 0f;
 
