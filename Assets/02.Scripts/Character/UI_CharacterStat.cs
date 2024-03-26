@@ -25,7 +25,8 @@ public class UI_CharacterStat : MonoBehaviour
         }
 
         HealthSliderUI.value = (float)MyCharacter.Stat.Health / MyCharacter.Stat.MaxHealth;
-        StaminaSliderUI.value = MyCharacter.Stat.Stamina / MyCharacter.Stat.MaxStamina;
+        StaminaSliderUI.value = 
+            MyCharacter.Stat.Stamina / MyCharacter.Stat.MaxStamina;
 
     }
 }

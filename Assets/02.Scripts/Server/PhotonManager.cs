@@ -21,8 +21,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // PUN의 다양한 서�
         // 3. 씬을 설정한다.
         // 4. 연결한다.
         PhotonNetwork.ConnectUsingSettings();
-
-        PhotonNetwork.SendRate = 30;
+        PhotonNetwork.SendRate          = 50;
         PhotonNetwork.SerializationRate = 30;
     }
 
