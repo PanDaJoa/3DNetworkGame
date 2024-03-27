@@ -22,7 +22,7 @@ public class CharacterCanvasAbility : CharacterAbility
             transform.forward = Camera.main.transform.forward;
         }
 
-        HpSliderUI.value = _owner.Stat.Health / _owner.Stat.MaxHealth;
+        HpSliderUI.value = (float)_owner.Stat.Health / _owner.Stat.MaxHealth;
         StaminaSliderUI.value = _owner.Stat.Stamina / _owner.Stat.MaxStamina;
     }
 }

@@ -13,6 +13,8 @@ public class Stat
     public float MoveSpeed;
     public float RunSpeed;
 
+    public int Damage;
+
     public float Stamina;
     public int MaxStamina;
     public int RecoveryStamina;

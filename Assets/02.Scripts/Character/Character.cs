@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterMoveAbility))]
 [RequireComponent(typeof(CharacterAttackAbility))]
 [RequireComponent(typeof(CharacterRotateAbility))]
-public class Character : MonoBehaviour, IPunObservable
+public class Character : MonoBehaviour, IPunObservable, IDamaged
 {
     public PhotonView PhotonView { get; private set; }
     public Stat Stat;
@@ -53,6 +53,12 @@ public class Character : MonoBehaviour, IPunObservable
             Stat.Stamina = (float)stream.ReceiveNext();
         }
         // info는 송수신 성공/실패 여부에 대한 메세지 담겨있다.
+    }
+
+    [PunRPC]
+    public void Damaged(int damage)
+    {
+        Stat.Health -= damage;
     }
 }
 

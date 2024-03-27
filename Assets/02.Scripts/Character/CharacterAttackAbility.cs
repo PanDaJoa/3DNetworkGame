@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,7 +18,7 @@ public class CharacterAttackAbility : CharacterAbility
 
     private Animator _animator;
     private float _attackTimer = 0;
-    
+
 
     private void Start()
     {
@@ -38,8 +39,36 @@ public class CharacterAttackAbility : CharacterAbility
 
             _attackTimer = 0f;
 
-            _animator.SetTrigger($"Attack{UnityEngine.Random.Range(1, 4)}");
+            _owner.PhotonView.RPC(nameof(PlayAttackAnimation), RpcTarget.All, Random.Range(1, 4));
+            // RpcTarget.All      : 모두에게
+            // RpcTarget.Others   : 나 자신을 제외하고 모두에게
+            // RpcTarget.Master   : 방장에게만
+        }
+    }
 
+    [PunRPC]
+    public void PlayAttackAnimation(int index)
+    {
+        _animator.SetTrigger($"Attack{index}");
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if (_owner.PhotonView.IsMine == false || other.transform == transform)
+        {
+            return;
+        }
+        // O: 개방 폐쇄 원칙 + 인터페이스 
+        // 수정에는 닫혀있고, 확장에는 열려있다.
+        IDamaged damagedAbleObject = other.GetComponent<IDamaged>();
+        if (damagedAbleObject != null)
+        {
+            PhotonView photonView = other.GetComponent<PhotonView>();
+            if (photonView != null)
+            {
+                photonView.RPC("Damaged", RpcTarget.All, _owner.Stat.Damage);
+            }
+            //damagedAbleObject.Damaged(_owner.Stat.Damage);
         }
     }
 }
