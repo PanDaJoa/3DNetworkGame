@@ -928,6 +928,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df1cf0b0fa2c4d64fbce86e504b0e368, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  WeaponCollider: {fileID: 728052894485094108}
 --- !u!114 &3733535645842466834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -945,10 +946,10 @@ MonoBehaviour:
     MaxHealth: 100
     MoveSpeed: 7
     RunSpeed: 14
-    Damage: 10
+    Damage: 40
     Stamina: 0
     MaxStamina: 100
-    RecoveryStamina: 5
+    RecoveryStamina: 15
     RunConsumeStamina: 10
     RotationSpeed: 500
     AttackCoolTime: 1
@@ -2255,7 +2256,7 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 0.39174208, y: 1.4156286, z: 0.08912745}
   m_Center: {x: 0.0000003430108, y: 0.5035896, z: -0.00000010223773}

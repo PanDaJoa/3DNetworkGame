@@ -19,11 +19,9 @@ public class CharacterAttackAbility : CharacterAbility
     private Animator _animator;
     private float _attackTimer = 0;
 
+    public Collider WeaponCollider;
 
-    private void Start()
-    {
-        _animator = GetComponent<Animator>();
-    }
+    private List<IDamaged> _damagedList = new List<IDamaged>();
 
     private void Update()
     {
@@ -61,14 +59,48 @@ public class CharacterAttackAbility : CharacterAbility
         // O: 개방 폐쇄 원칙 + 인터페이스 
         // 수정에는 닫혀있고, 확장에는 열려있다.
         IDamaged damagedAbleObject = other.GetComponent<IDamaged>();
+        
         if (damagedAbleObject != null)
         {
+            if(_damagedList.Contains(damagedAbleObject))
+            {
+                return;
+            }
+
+            _damagedList.Add(damagedAbleObject);
+
+            //생성
+            GameObject hiteffect = PhotonNetwork.Instantiate("HitEffect", Vector3.zero, Quaternion.identity);
+            //위치
+            hiteffect.transform.position = ((other.transform.position + transform.position) / 2f) + (Vector3.up * 0.7f);
+            //파티클 재생
+            hiteffect.GetComponent<ParticleSystem>().Play();
+
+
+
+
+
             PhotonView photonView = other.GetComponent<PhotonView>();
             if (photonView != null)
             {
+                
                 photonView.RPC("Damaged", RpcTarget.All, _owner.Stat.Damage);
             }
             //damagedAbleObject.Damaged(_owner.Stat.Damage);
         }
+    }
+    private void Start()
+    {
+        _animator = GetComponent<Animator>();
+    }
+    public void ActiveCollider()
+    {
+        WeaponCollider.enabled = true;
+    }
+    public void InActiveCollider()
+    {
+        WeaponCollider.enabled = false;
+
+        _damagedList.Clear();
     }
 }

@@ -17,6 +17,7 @@ public class CharacterRotateAbility : CharacterAbility
         if (_owner.PhotonView.IsMine)
         {
             GameObject.FindWithTag("FollowCamera").GetComponent<CinemachineVirtualCamera>().Follow = CameraRoot;
+            MinimapCamera.Instance.Target = transform;
         }
 
     }

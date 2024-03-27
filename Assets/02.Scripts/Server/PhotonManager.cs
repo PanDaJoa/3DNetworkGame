@@ -12,7 +12,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // PUN의 다양한 서�
         // 목적: 연결을 하고 싶다.
         // 순서:
         // 1. 게임 버전을 설정한다.
-        PhotonNetwork.GameVersion = "0.0.1";
+        PhotonNetwork.GameVersion = "0.0.2";
         // <전체를 뒤엎을 변화>, <기능 수정, 추가>, <버그, 내부적 코드 수정>
 
         // 2. 닉네임을 설정한다.
@@ -66,7 +66,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // PUN의 다양한 서�
         roomOptions.MaxPlayers = 20;   // 입장 가능한 최대 플레이어 수
         roomOptions.IsVisible = true; // 로비에서 방 목록에 노출할 것인가?
         roomOptions.IsOpen = true;
-        PhotonNetwork.JoinOrCreateRoom("test", roomOptions, TypedLobby.Default); // 방이 있다면 입장하고 없다면 만드는 것
+        PhotonNetwork.JoinOrCreateRoom("test2", roomOptions, TypedLobby.Default); // 방이 있다면 입장하고 없다면 만드는 것
         //PhotonNetwork.JoinRandomOrCreateRoom(); // 랜덤한 방에 들어가거나 없다면 만드는 것
     }
 
