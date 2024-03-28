@@ -8,6 +8,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CharacterMoveAbility))]
 [RequireComponent(typeof(CharacterAttackAbility))]
 [RequireComponent(typeof(CharacterRotateAbility))]
+[RequireComponent(typeof(CharacterShakeAbility))]
 public class Character : MonoBehaviour, IPunObservable, IDamaged
 {
     public PhotonView PhotonView { get; private set; }
@@ -29,18 +30,9 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         {
             UI_CharacterStat.Instance.MyCharacter = this;
         }
+        
     }
 
-    public void Start()
-    {
-        // Resources 폴더에서 이미지를 로드하여 설정합니다.
-        Sprite hitEffectSprite = Resources.Load<Sprite>("HitEffectSprite");
-        if (hitEffectSprite != null)
-        {
-            // 이미지가 로드되었다면 이미지 컴포넌트에 설정합니다.
-            HitEffectImageUI.sprite = hitEffectSprite;
-        }
-    }
     private Vector3 _receivedPosition;
     private Quaternion _receivedRotation;
     private void Update()
@@ -81,17 +73,26 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         StartCoroutine(HitEffect_Coroutine(HitEffectDelay));
         Stat.Health -= damage;
 
+        if (PhotonView.IsMine)
+        {
+            CinemachineImpulseSource impulseSource = null;
+            if (TryGetComponent<CinemachineImpulseSource>(out impulseSource))
+            {
+                float strength = 0.4f;
+                impulseSource.GenerateImpulseWithVelocity(Random.insideUnitSphere.normalized * strength);
+            }
+            GetComponent<CharacterShakeAbility>().Shake();
+            UI_DamageEffect.Instance.Show(0.5f);
+        }
         
+
 
         if (Stat.Health <= 0)
         {
             isDead = true;
             HandleDeath();
         }
-        else if (PhotonView.IsMine)
-        {
-            impulseSource.GenerateImpulse();
-        }
+
 
     }
 
