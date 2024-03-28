@@ -903,6 +903,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 0}
+  _yVelocity: 0
 --- !u!114 &153929623387760396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -944,8 +945,9 @@ MonoBehaviour:
   Stat:
     Health: 0
     MaxHealth: 100
-    MoveSpeed: 7
+    MoveSpeed: 5
     RunSpeed: 14
+    JumpPower: 3
     Damage: 40
     Stamina: 0
     MaxStamina: 100
