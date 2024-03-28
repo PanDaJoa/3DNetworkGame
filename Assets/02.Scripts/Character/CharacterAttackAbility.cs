@@ -25,7 +25,9 @@ public class CharacterAttackAbility : CharacterAbility
 
     private void Update()
     {
-        if (!_owner.PhotonView.IsMine)
+
+
+        if (!_owner.PhotonView.IsMine || _owner.State == State.Death)
         {
             return;
         }
@@ -52,17 +54,31 @@ public class CharacterAttackAbility : CharacterAbility
 
     public void OnTriggerEnter(Collider other)
     {
+        if(_owner.State == State.Death)
+        {
+            return;
+        }
+
         if (_owner.PhotonView.IsMine == false || other.transform == transform)
         {
             return;
         }
+
+        
+
         // O: 개방 폐쇄 원칙 + 인터페이스 
         // 수정에는 닫혀있고, 확장에는 열려있다.
         IDamaged damagedAbleObject = other.GetComponent<IDamaged>();
         
         if (damagedAbleObject != null)
         {
-            if(_damagedList.Contains(damagedAbleObject))
+            IState stateObject = other.GetComponent<IState>();
+            if (stateObject != null && stateObject.GetState() == State.Death)
+            {
+                return;
+            }
+
+            if (_damagedList.Contains(damagedAbleObject))
             {
                 return;
             }
@@ -75,8 +91,6 @@ public class CharacterAttackAbility : CharacterAbility
             hiteffect.transform.position = ((other.transform.position + transform.position) / 2f) + (Vector3.up * 0.7f);
             //파티클 재생
             hiteffect.GetComponent<ParticleSystem>().Play();
-
-
 
 
 

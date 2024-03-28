@@ -2,8 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterShakeAbility : MonoBehaviour
+public class CharacterShakeAbility : CharacterAbility
 {
+  
+
+
     public Transform TargetTransform;
     public float Duration = 0.5f;
     public float Strength = 0.2f;

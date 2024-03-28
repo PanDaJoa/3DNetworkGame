@@ -28,6 +28,7 @@ public class Stat
     public int AttackStamina;        // 공격 스태미나 20 필요
     public int AttackConsumeSpeed;
 
+
     public void Init()
     {
         Health = MaxHealth;

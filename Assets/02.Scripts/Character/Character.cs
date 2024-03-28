@@ -2,6 +2,7 @@ using Cinemachine;
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,20 +10,47 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CharacterAttackAbility))]
 [RequireComponent(typeof(CharacterRotateAbility))]
 [RequireComponent(typeof(CharacterShakeAbility))]
-public class Character : MonoBehaviour, IPunObservable, IDamaged
+public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
 {
     public PhotonView PhotonView { get; private set; }
     public Stat Stat;
+    public State State { get; private set; } = State.Live;
 
-    private bool isDead = false;
+    public State GetState()
+    {
+        return State;
+    }
+
+
+    private List<CharacterAbility> _abilities;
+
+
+    private float DistroyTime = 2f;
 
     private CinemachineImpulseSource impulseSource;
 
     public Image HitEffectImageUI;
     public float HitEffectDelay = 0.2f;
 
+    public Animator _animator;
+
+    public T GetAbility<T>() where T : CharacterAbility
+    {
+        foreach (CharacterAbility ability in _abilities)
+        {
+            if (ability is T)
+            {
+                return ability as T;
+            }
+        }
+
+        return null;
+    }
+
     private void Awake()
     {
+        _abilities = GetComponentsInChildren<CharacterAbility>().ToList<CharacterAbility>();
+
         Stat.Init();
         PhotonView = GetComponent<PhotonView>();
         impulseSource = GetComponent<CinemachineImpulseSource>();
@@ -30,7 +58,7 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         {
             UI_CharacterStat.Instance.MyCharacter = this;
         }
-        
+        _animator = GetComponent<Animator>();
     }
 
     private Vector3 _receivedPosition;
@@ -70,7 +98,11 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
     [PunRPC]
     public void Damaged(int damage)
     {
-        StartCoroutine(HitEffect_Coroutine(HitEffectDelay));
+        if (State == State.Death)
+        {
+            return;
+        }
+
         Stat.Health -= damage;
 
         if (PhotonView.IsMine)
@@ -81,41 +113,27 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
                 float strength = 0.4f;
                 impulseSource.GenerateImpulseWithVelocity(Random.insideUnitSphere.normalized * strength);
             }
-            GetComponent<CharacterShakeAbility>().Shake();
+            
             UI_DamageEffect.Instance.Show(0.5f);
         }
-        
 
+        GetAbility<CharacterShakeAbility>().Shake();
 
         if (Stat.Health <= 0)
         {
-            isDead = true;
-            HandleDeath();
+            State = State.Death;
+
+            _animator.SetTrigger("Die");
+            StartCoroutine(CharacterDestroy(DistroyTime));
         }
 
 
     }
-
-    private IEnumerator HitEffect_Coroutine(float delay)
+    public IEnumerator CharacterDestroy(float delay)
     {
-        HitEffectImageUI.gameObject.SetActive(true);
-        // 과제 40. 히트 이펙트 이미지 0.3초동안 보이게 구현
-        yield return new WaitForSeconds(HitEffectDelay);
-        HitEffectImageUI.gameObject.SetActive(false);
-    }
+        yield return new WaitForSeconds(delay);
 
-    private void HandleDeath()
-    {
-        // 체력이 0 이하일 때만 캐릭터를 비활성화하고 게임에서 나가는 처리를 수행
-        if (Stat.Health <= 0)
-        {
-            // 캐릭터를 비활성화하거나 다른 처리를 수행할 수 있습니다.
-            gameObject.SetActive(false);
-
-            // 여기서는 간단히 로그를 출력합니다.
-            Debug.Log("플레이어가 사망했습니다.");
-
-        }
+        gameObject.SetActive(false);
     }
 }
 

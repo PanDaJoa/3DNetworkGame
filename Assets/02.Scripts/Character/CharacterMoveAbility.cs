@@ -24,7 +24,7 @@ public class CharacterMoveAbility : CharacterAbility
     private PhotonView _photonView;
     private void Update()
     {
-        if (!_owner.PhotonView.IsMine)
+        if (!_owner.PhotonView.IsMine || _owner.State == State.Death)
         {
             return;
         }

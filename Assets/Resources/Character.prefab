@@ -817,6 +817,7 @@ GameObject:
   - component: {fileID: 1819590037472984806}
   - component: {fileID: -281822586319969357}
   - component: {fileID: 118974637609973549}
+  - component: {fileID: 4260655413349240337}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -958,6 +959,7 @@ MonoBehaviour:
     AttackConsumeSpeed: 2
   HitEffectImageUI: {fileID: 6402599462234066840, guid: 007dacfcff45a6849aaa7e7647f7b851, type: 3}
   HitEffectDelay: 0.2
+  _animator: {fileID: 0}
 --- !u!114 &395524311794535422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1091,7 +1093,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TargetTransform: {fileID: 736187661327520021}
   Duration: 0.5
-  Strength: 0.2
+  Strength: 0.05
+--- !u!114 &4260655413349240337
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2694214117666688556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12f965a5392e0c94d912a882f5045065, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnPoints:
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &2850341819657670760
 GameObject:
   m_ObjectHideFlags: 0

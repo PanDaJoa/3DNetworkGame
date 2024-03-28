@@ -77,15 +77,21 @@ public class PhotonManager : MonoBehaviourPunCallbacks // PUN의 다양한 서�
         Debug.Log($"RoomName: {PhotonNetwork.CurrentRoom.Name}");
     }
 
+    
     // 방에 들어갔을 때 호출되는 함수
     public override void OnJoinedRoom()
     {
-        Debug.Log("방 입장 성공!");
+       Debug.Log("방 입장 성공!");
         Debug.Log($"RoomName: {PhotonNetwork.CurrentRoom.Name}");
         Debug.Log($"PlayerCount: {PhotonNetwork.CurrentRoom.PlayerCount}");
         Debug.Log($"MaxCount: {PhotonNetwork.CurrentRoom.MaxPlayers}");
 
-        PhotonNetwork.Instantiate("Character", Vector3.zero, Quaternion.identity);
+        CharacterRespawner.Instance.RespawnPlayer();
+
+        if (photonView != null)
+        {
+            photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+        }
     }
 
     // 방 생성에 실패했을 때 호출되는 콜백 함수
