@@ -20,13 +20,12 @@ public class UI_CharacterStat : MonoBehaviour
     {
         if (MyCharacter == null)
         {
-            Debug.Log("캐릭터없음");   
+            Debug.Log("캐릭터없음");
             return;
         }
 
         HealthSliderUI.value = (float)MyCharacter.Stat.Health / MyCharacter.Stat.MaxHealth;
-        StaminaSliderUI.value = 
-            MyCharacter.Stat.Stamina / MyCharacter.Stat.MaxStamina;
+        StaminaSliderUI.value = MyCharacter.Stat.Stamina / MyCharacter.Stat.MaxStamina;
 
     }
 }
