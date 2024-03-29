@@ -25,8 +25,6 @@ public class CharacterAttackAbility : CharacterAbility
 
     private void Update()
     {
-
-
         if (!_owner.PhotonView.IsMine || _owner.State == State.Death)
         {
             return;
@@ -117,4 +115,6 @@ public class CharacterAttackAbility : CharacterAbility
 
         _damagedList.Clear();
     }
+
+
 }

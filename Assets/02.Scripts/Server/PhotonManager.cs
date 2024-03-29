@@ -3,6 +3,7 @@ using UnityEngine;
 // Photon API를 사용하기 위한 네임스페이스
 using Photon.Pun;
 using Photon.Realtime;
+using Random = UnityEngine.Random;
 
 // 역할: 포톤 서버 연결 관리자
 public class PhotonManager : MonoBehaviourPunCallbacks // PUN의 다양한 서버 이벤트(콜백 함수)를 받는다.
@@ -12,7 +13,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // PUN의 다양한 서�
         // 목적: 연결을 하고 싶다.
         // 순서:
         // 1. 게임 버전을 설정한다.
-        PhotonNetwork.GameVersion = "0.0.2";
+        PhotonNetwork.GameVersion = "0.0.1";
         // <전체를 뒤엎을 변화>, <기능 수정, 추가>, <버그, 내부적 코드 수정>
 
         // 2. 닉네임을 설정한다.
@@ -21,8 +22,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks // PUN의 다양한 서�
         // 3. 씬을 설정한다.
         // 4. 연결한다.
         PhotonNetwork.ConnectUsingSettings();
-        PhotonNetwork.SendRate          = 50;
+
+        PhotonNetwork.SendRate = 50;
         PhotonNetwork.SerializationRate = 30;
+
     }
 
     // 포톤 서버에 접속 후 호출되는 콜백 함수
@@ -66,7 +69,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks // PUN의 다양한 서�
         roomOptions.MaxPlayers = 20;   // 입장 가능한 최대 플레이어 수
         roomOptions.IsVisible = true; // 로비에서 방 목록에 노출할 것인가?
         roomOptions.IsOpen = true;
-        PhotonNetwork.JoinOrCreateRoom("test2", roomOptions, TypedLobby.Default); // 방이 있다면 입장하고 없다면 만드는 것
+        PhotonNetwork.JoinOrCreateRoom("test", roomOptions, TypedLobby.Default); // 방이 있다면 입장하고 없다면 만드는 것
         //PhotonNetwork.JoinRandomOrCreateRoom(); // 랜덤한 방에 들어가거나 없다면 만드는 것
     }
 
@@ -77,21 +80,15 @@ public class PhotonManager : MonoBehaviourPunCallbacks // PUN의 다양한 서�
         Debug.Log($"RoomName: {PhotonNetwork.CurrentRoom.Name}");
     }
 
-    
     // 방에 들어갔을 때 호출되는 함수
     public override void OnJoinedRoom()
     {
-       Debug.Log("방 입장 성공!");
+        Debug.Log("방 입장 성공!");
         Debug.Log($"RoomName: {PhotonNetwork.CurrentRoom.Name}");
         Debug.Log($"PlayerCount: {PhotonNetwork.CurrentRoom.PlayerCount}");
         Debug.Log($"MaxCount: {PhotonNetwork.CurrentRoom.MaxPlayers}");
 
-        CharacterRespawner.Instance.RespawnPlayer();
-
-        if (photonView != null)
-        {
-            photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
-        }
+        PhotonNetwork.Instantiate(nameof(Character), Vector3.zero, Quaternion.identity);
     }
 
     // 방 생성에 실패했을 때 호출되는 콜백 함수

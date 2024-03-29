@@ -815,9 +815,8 @@ GameObject:
   - component: {fileID: 395524311794535422}
   - component: {fileID: 6275301157334166656}
   - component: {fileID: 1819590037472984806}
-  - component: {fileID: -281822586319969357}
   - component: {fileID: 118974637609973549}
-  - component: {fileID: 4260655413349240337}
+  - component: {fileID: -8325439527491214090}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -957,9 +956,6 @@ MonoBehaviour:
     AttackCoolTime: 1
     AttackStamina: 20
     AttackConsumeSpeed: 2
-  HitEffectImageUI: {fileID: 6402599462234066840, guid: 007dacfcff45a6849aaa7e7647f7b851, type: 3}
-  HitEffectDelay: 0.2
-  _animator: {fileID: 0}
 --- !u!114 &395524311794535422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1011,6 +1007,12 @@ MonoBehaviour:
   - Type: 9
     SynchronizeType: 1
     Name: Attack3
+  - Type: 9
+    SynchronizeType: 0
+    Name: Death
+  - Type: 9
+    SynchronizeType: 0
+    Name: Live
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0
@@ -1067,18 +1069,6 @@ MonoBehaviour:
     m_DissipationDistance: 100
     m_PropagationSpeed: 343
   m_DefaultVelocity: {x: 0, y: -1, z: 0}
---- !u!225 &-281822586319969357
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2694214117666688556}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!114 &118974637609973549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1094,7 +1084,7 @@ MonoBehaviour:
   TargetTransform: {fileID: 736187661327520021}
   Duration: 0.5
   Strength: 0.05
---- !u!114 &4260655413349240337
+--- !u!114 &-8325439527491214090
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1103,12 +1093,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 2694214117666688556}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12f965a5392e0c94d912a882f5045065, type: 3}
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPoints:
-  - {fileID: 0}
-  - {fileID: 0}
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &2850341819657670760
 GameObject:
   m_ObjectHideFlags: 0

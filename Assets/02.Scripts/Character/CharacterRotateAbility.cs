@@ -24,7 +24,7 @@ public class CharacterRotateAbility : CharacterAbility
 
     private void Update()
     {
-        if (!_owner.PhotonView.IsMine)
+        if (!_owner.PhotonView.IsMine || _owner.State == State.Death)
         {
             return;
         }
@@ -40,6 +40,10 @@ public class CharacterRotateAbility : CharacterAbility
         transform.eulerAngles = new Vector3(0, _mx, 0);
         CameraRoot.localEulerAngles = new Vector3(-_my, 0 , 0);
     }
-
+    public void SetRandomRotation()
+    {
+        _mx = UnityEngine.Random.Range(0, 360);
+        _my = 0;
+    }
 
 }

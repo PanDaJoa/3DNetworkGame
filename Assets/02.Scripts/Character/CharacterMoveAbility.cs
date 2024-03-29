@@ -1,7 +1,9 @@
+using JetBrains.Annotations;
 using Photon.Pun;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 using static UnityEngine.UI.GridLayoutGroup;
 
 [RequireComponent(typeof(CharacterController))]
@@ -36,14 +38,13 @@ public class CharacterMoveAbility : CharacterAbility
         // 2. '캐릭터가 바라보는 방향'을 기준으로 방향을 설정한다.
         Vector3 dir = new Vector3(h, 0, v);
         dir.Normalize();
-        dir = Camera.main.transform.TransformDirection(dir);
+        dir = Camera.main.transform.TransformDirection(dir); // 글로벌 좌표계
 
         _animator.SetFloat("Move", dir.magnitude);
 
         // 4. 중력 적용하세요.
         dir.y = _yVelocity;
         _yVelocity += _gravity * Time.deltaTime;
-
 
         // 3. 이동속도에 따라 그 방향으로 이동한다.
         float moveSpeed = _owner.Stat.MoveSpeed;
@@ -69,6 +70,13 @@ public class CharacterMoveAbility : CharacterAbility
             _yVelocity = _owner.Stat.JumpPower;
         }
     }
+    public void Teleport(Vector3 position)
+    {
+        _characterController.enabled = false;
 
+        transform.position = position;
+
+        _characterController.enabled = true;
+    }
 }
 
