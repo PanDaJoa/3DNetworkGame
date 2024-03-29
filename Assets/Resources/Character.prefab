@@ -819,7 +819,7 @@ GameObject:
   - component: {fileID: -8325439527491214090}
   m_Layer: 0
   m_Name: Character
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -956,6 +956,10 @@ MonoBehaviour:
     AttackCoolTime: 1
     AttackStamina: 20
     AttackConsumeSpeed: 2
+  HitEffectImageUI: {fileID: 0}
+  HitEffectDelay: 0.2
+  _animator: {fileID: 0}
+  spawnPoints: []
 --- !u!114 &395524311794535422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -977,6 +981,7 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: 3733535645842466834}
   - {fileID: 6275301157334166656}
+  - {fileID: -8325439527491214090}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
