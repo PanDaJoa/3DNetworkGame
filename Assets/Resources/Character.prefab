@@ -948,7 +948,7 @@ MonoBehaviour:
     MoveSpeed: 5
     RunSpeed: 14
     JumpPower: 3
-    JumpStamina: 10
+    JumpConsumeStamina: 0
     Damage: 40
     Stamina: 0
     MaxStamina: 100

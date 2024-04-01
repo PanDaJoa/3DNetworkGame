@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
+public enum SecneNames
+{
+    Lobby,  // 0
+    Main,   // 1
+}
 public class LobbyScene : MonoBehaviour
 {
     public TMP_InputField inputField;
+    public Button Button;
 
     // 클릭 이벤트 핸들러
     public void OnPointerClick( )
@@ -18,5 +24,9 @@ public class LobbyScene : MonoBehaviour
             TextMeshProUGUI a = inputField.placeholder.GetComponent<TextMeshProUGUI>();
             a.text = "";
         }
+    }
+    public void OnJoinButton()
+    {
+        SceneManager.LoadScene(1);
     }
 }
