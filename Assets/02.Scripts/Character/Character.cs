@@ -37,6 +37,8 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
 
     public Transform[] spawnPoints;
 
+    public ItemObject itemFactory;
+
     public T GetAbility<T>() where T : CharacterAbility
     {
         foreach (CharacterAbility ability in _abilities)
@@ -170,7 +172,6 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
         UI_DamageEffect.Instance.Show(0.5f);
     }
 
-
     [PunRPC]
     private void Death()
     {
@@ -178,7 +179,7 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
 
         GetComponent<Animator>().SetTrigger("Death");
         GetComponent<CharacterAttackAbility>().InActiveCollider();
-
+        
 
         // 죽고나서 5초후 리스폰
         if (PhotonView.IsMine)

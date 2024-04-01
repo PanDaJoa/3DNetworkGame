@@ -962,6 +962,7 @@ MonoBehaviour:
   HitEffectDelay: 0.2
   _animator: {fileID: 0}
   spawnPoints: []
+  itemFactory: {fileID: 0}
 --- !u!114 &395524311794535422
 MonoBehaviour:
   m_ObjectHideFlags: 0
