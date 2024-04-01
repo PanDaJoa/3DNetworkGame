@@ -1,27 +1,24 @@
 using Photon.Pun;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class CampFire : MonoBehaviour
+public class Campfire : MonoBehaviour
 {
     public int Damage = 20;
-
-    public float CoolTime = 1f; 
+    public float Cooltime = 1f;
     private float _timer = 0f;
 
     private IDamaged _target = null;
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider col)
     {
-        IDamaged damagedObject = other.GetComponent<IDamaged>();
+        IDamaged damagedObject = col.GetComponent<IDamaged>();
         if (damagedObject == null)
         {
             return;
         }
 
-        PhotonView photonView = other.GetComponent<PhotonView>();
+        PhotonView photonView = col.GetComponent<PhotonView>();
         if (photonView == null || !photonView.IsMine)
         {
             return;
@@ -30,30 +27,30 @@ public class CampFire : MonoBehaviour
         _target = damagedObject;
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerStay(Collider col)
     {
-        if(_target == null)
+        if (_target == null)
         {
             return;
         }
 
         _timer += Time.deltaTime;
-        if (_timer >= CoolTime)
+        if (_timer >= Cooltime)
         {
             _timer = 0f;
-            _target.Damaged(Damage);
+            _target.Damaged(Damage, -1);
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider col)
     {
-        IDamaged damagedObject = other.GetComponent<IDamaged>();
+        IDamaged damagedObject = col.GetComponent<IDamaged>();
         if (damagedObject == null)
         {
             return;
         }
 
-        if(damagedObject == _target)
+        if (damagedObject == _target)
         {
             _target = null;
             _timer = 0f;

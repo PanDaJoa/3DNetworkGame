@@ -14,6 +14,7 @@ public class Stat
     public float RunSpeed;
 
     public float JumpPower;
+    public float JumpConsumeStamina;
 
     public int Damage;
 

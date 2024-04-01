@@ -109,15 +109,29 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
     }
 
     [PunRPC]
-    public void Damaged(int damage)
+    public void AddLog(string logmessage)
+    {
+        UI_RoomInfo.Instance.AddLog(logmessage);
+    }
+
+    [PunRPC]
+    public void Damaged(int damage, int actorNumber)
     {
         if (State == State.Death)
         {
             return;
         }
+
         Stat.Health -= damage;
         if (Stat.Health <= 0)
         {
+            State = State.Death;
+
+            if (PhotonView.IsMine)
+            {
+                OnDeath(actorNumber);
+            }
+
             PhotonView.RPC(nameof(Death), RpcTarget.All);
         }
 
@@ -126,6 +140,20 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
         if (PhotonView.IsMine)
         {
             OnDamagedMine();
+        }
+    }
+    private void OnDeath(int actorNumber)
+    {
+        if (actorNumber >= 0)
+        {
+            string nickname = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber).NickName;
+            string logMessage = $"\n{nickname}님이 {PhotonView.Owner.NickName}을 처치하였습니다.";
+            PhotonView.RPC(nameof(AddLog), RpcTarget.All, logMessage);
+        }
+        else
+        {
+            string logMessage = $"\n{PhotonView.Owner.NickName}이 운명을 다했습니다.";
+            PhotonView.RPC(nameof(AddLog), RpcTarget.All, logMessage);
         }
     }
 
@@ -146,10 +174,6 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
     [PunRPC]
     private void Death()
     {
-        if (State == State.Death)
-        {
-            return;
-        }
         State = State.Death;
 
         GetComponent<Animator>().SetTrigger("Death");
@@ -167,9 +191,16 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
     {
         yield return new WaitForSeconds(5f);
 
-        PhotonView.RPC(nameof(Live), RpcTarget.All);
-
         SetRandomPositionAndRotation();
+
+        PhotonView.RPC(nameof(Live), RpcTarget.All);
+    }
+
+    private void SetRandomPositionAndRotation()
+    {
+        Vector3 spawnPoint = BattleScene.Instance.GetRandomSpawnPoint();
+        GetComponent<CharacterMoveAbility>().Teleport(spawnPoint);
+        GetComponent<CharacterRotateAbility>().SetRandomRotation();
     }
 
     [PunRPC]
@@ -182,13 +213,6 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
         GetComponent<Animator>().SetTrigger("Live");
 
     }
-    private void SetRandomPositionAndRotation()
-    {
-        Vector3 spawnPoint = BattleScene.Instance.GetRandomSpawnPoint();
-        GetComponent<CharacterMoveAbility>().Teleport(spawnPoint);
-        GetComponent<CharacterRotateAbility>().SetRandomRotation();
-    }
-
 
 }
 

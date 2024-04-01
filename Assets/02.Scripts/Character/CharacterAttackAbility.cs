@@ -21,8 +21,15 @@ public class CharacterAttackAbility : CharacterAbility
 
     public Collider WeaponCollider;
 
+    public CharacterController _characterController;
+
     private List<IDamaged> _damagedList = new List<IDamaged>();
 
+    private void Start()
+    {
+        _animator = GetComponent<Animator>();
+        _characterController = GetComponent<CharacterController>();
+    }
     private void Update()
     {
         if (!_owner.PhotonView.IsMine || _owner.State == State.Death)
@@ -33,11 +40,20 @@ public class CharacterAttackAbility : CharacterAbility
 
         if (Input.GetMouseButtonDown(0) && _attackTimer >= _owner.Stat.AttackCoolTime && _owner.Stat.Stamina > _owner.Stat.AttackStamina)
         {
-            _owner.Stat.Stamina -= _owner.Stat.RunConsumeStamina * _owner.Stat.AttackConsumeSpeed;
+            if (!_characterController.isGrounded)
+            {
+
+                _owner.PhotonView.RPC(nameof(Attack4), RpcTarget.All);
+
+            }
+            else
+            {
+                _owner.PhotonView.RPC(nameof(PlayAttackAnimation), RpcTarget.All, Random.Range(1, 4));
+            }
+                _owner.Stat.Stamina -= _owner.Stat.RunConsumeStamina * _owner.Stat.AttackConsumeSpeed;
 
             _attackTimer = 0f;
 
-            _owner.PhotonView.RPC(nameof(PlayAttackAnimation), RpcTarget.All, Random.Range(1, 4));
             // RpcTarget.All      : 모두에게
             // RpcTarget.Others   : 나 자신을 제외하고 모두에게
             // RpcTarget.Master   : 방장에게만
@@ -48,6 +64,11 @@ public class CharacterAttackAbility : CharacterAbility
     public void PlayAttackAnimation(int index)
     {
         _animator.SetTrigger($"Attack{index}");
+    }
+    [PunRPC]
+    public void Attack4()
+    {
+        _animator.SetTrigger("Attack4");
     }
 
     public void OnTriggerEnter(Collider other)
@@ -96,14 +117,10 @@ public class CharacterAttackAbility : CharacterAbility
             if (photonView != null)
             {
                 
-                photonView.RPC("Damaged", RpcTarget.All, _owner.Stat.Damage);
+                photonView.RPC("Damaged", RpcTarget.All, _owner.Stat.Damage, _owner.PhotonView.OwnerActorNr);
             }
             //damagedAbleObject.Damaged(_owner.Stat.Damage);
         }
-    }
-    private void Start()
-    {
-        _animator = GetComponent<Animator>();
     }
     public void ActiveCollider()
     {

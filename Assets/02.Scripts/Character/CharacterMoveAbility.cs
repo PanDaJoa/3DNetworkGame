@@ -61,13 +61,15 @@ public class CharacterMoveAbility : CharacterAbility
                 _owner.Stat.Stamina = _owner.Stat.MaxStamina;
             }
         }
-
+       
         // 4. 이동속도에 따라 그 방향으로 이동한다.
         _characterController.Move(dir * (moveSpeed * Time.deltaTime));
 
-        if (_characterController.isGrounded && Input.GetKey(KeyCode.Space))
+        if (_characterController.isGrounded && Input.GetKeyDown(KeyCode.Space))
         {
             _yVelocity = _owner.Stat.JumpPower;
+
+            _owner.Stat.Stamina -= _owner.Stat.JumpConsumeStamina;
         }
     }
     public void Teleport(Vector3 position)

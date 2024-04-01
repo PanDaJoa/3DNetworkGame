@@ -929,6 +929,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   WeaponCollider: {fileID: 728052894485094108}
+  _characterController: {fileID: 0}
 --- !u!114 &3733535645842466834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -947,6 +948,7 @@ MonoBehaviour:
     MoveSpeed: 5
     RunSpeed: 14
     JumpPower: 3
+    JumpStamina: 10
     Damage: 40
     Stamina: 0
     MaxStamina: 100
@@ -1013,11 +1015,14 @@ MonoBehaviour:
     SynchronizeType: 1
     Name: Attack3
   - Type: 9
-    SynchronizeType: 0
+    SynchronizeType: 1
     Name: Death
   - Type: 9
     SynchronizeType: 0
     Name: Live
+  - Type: 9
+    SynchronizeType: 0
+    Name: Attack4
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0
