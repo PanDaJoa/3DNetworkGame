@@ -127,8 +127,6 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
         Stat.Health -= damage;
         if (Stat.Health <= 0)
         {
-            State = State.Death;
-
             if (PhotonView.IsMine)
             {
                 OnDeath(actorNumber);
@@ -175,15 +173,23 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
     [PunRPC]
     private void Death()
     {
+        if (State == State.Death)
+        {
+            return;
+        }
         State = State.Death;
 
         GetComponent<Animator>().SetTrigger("Death");
         GetComponent<CharacterAttackAbility>().InActiveCollider();
-        
+
 
         // 죽고나서 5초후 리스폰
         if (PhotonView.IsMine)
         {
+            // 팩토리패턴: 
+            ItemObjectFactory.Instance.RequestCreate(ItemType.HealthPotion, transform.position);
+            ItemObjectFactory.Instance.RequestCreate(ItemType.StaminaPotion, transform.position);
+
             StartCoroutine(Death_Coroutine());
         }
     }

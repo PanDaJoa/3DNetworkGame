@@ -45,6 +45,9 @@ MonoBehaviour:
   - Live
   - AddLog
   - Attack4
+  - MakeItem
+  - Create
+  - Delete
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

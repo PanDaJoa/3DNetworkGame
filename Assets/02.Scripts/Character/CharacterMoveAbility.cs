@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using Photon.Pun;
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -48,6 +49,8 @@ public class CharacterMoveAbility : CharacterAbility
 
         // 3. 이동속도에 따라 그 방향으로 이동한다.
         float moveSpeed = _owner.Stat.MoveSpeed;
+
+        // 스태미너가 0보다 큰 경우에만 뛸 수 있도록 설정
         if (Input.GetKey(KeyCode.LeftShift) && _owner.Stat.Stamina > 0)
         {
             moveSpeed = _owner.Stat.RunSpeed;
@@ -55,13 +58,22 @@ public class CharacterMoveAbility : CharacterAbility
         }
         else
         {
-            _owner.Stat.Stamina += Time.deltaTime * _owner.Stat.RecoveryStamina;
-            if (_owner.Stat.Stamina >= _owner.Stat.MaxStamina)
-            {
-                _owner.Stat.Stamina = _owner.Stat.MaxStamina;
-            }
+            moveSpeed = _owner.Stat.MoveSpeed;
         }
-       
+
+
+        _owner.Stat.Stamina = Mathf.Max(_owner.Stat.Stamina, 0);
+
+
+        if (!Input.GetKey(KeyCode.LeftShift))
+        {
+            _owner.Stat.Stamina += Time.deltaTime * _owner.Stat.RecoveryStamina;
+
+            _owner.Stat.Stamina = Mathf.Min(_owner.Stat.Stamina, _owner.Stat.MaxStamina);
+        }
+
+
+
         // 4. 이동속도에 따라 그 방향으로 이동한다.
         _characterController.Move(dir * (moveSpeed * Time.deltaTime));
 

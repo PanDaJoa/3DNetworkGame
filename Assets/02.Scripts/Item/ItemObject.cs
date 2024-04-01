@@ -5,7 +5,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(PhotonView))]
 [RequireComponent(typeof(Collider))]
-public class ItemObject : MonoBehaviour
+public class ItemObject : MonoBehaviourPun
 {
     [Header("아이템 타입")]
     public ItemType ItemType;
@@ -16,7 +16,7 @@ public class ItemObject : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Character character = other.GetComponent<Character>();
-            if (character.State == State.Death)
+            if (!character.PhotonView.IsMine || character.State == State.Death)
             {
                 return;
             }
@@ -26,15 +26,25 @@ public class ItemObject : MonoBehaviour
                 case ItemType.HealthPotion: 
                 {
                     character.Stat.Health += (int)Value;
+                    if (character.Stat.Health >= character.Stat.MaxHealth)
+                    {
+                        character.Stat.Health = character.Stat.MaxHealth;
+                    }
                     break;
                 }
                 case ItemType.StaminaPotion:
                 {
                     character.Stat.Stamina += Value;
+                    if (character.Stat.Stamina >= character.Stat.MaxStamina)
+                    {
+                        character.Stat.Stamina = character.Stat.MaxStamina;
+                    }                    
                     break;
                 }
 
             }
+            gameObject.SetActive(false);
+            ItemObjectFactory.Instance.RequestDelete(photonView.ViewID);
         }
     }
 }
