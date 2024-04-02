@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,20 +27,12 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
 
     private List<CharacterAbility> _abilities;
 
-
-    private float DestroyTime = 2f;
-
     private CinemachineImpulseSource impulseSource;
-
-    public Image HitEffectImageUI;
-    public float HitEffectDelay = 0.2f;
 
     public Animator _animator;
 
-    public Transform[] spawnPoints;
-
-    public ItemObject itemFactory;
-
+    public int Score;
+    public TextMeshProUGUI ScoreTextUI;
     public T GetAbility<T>() where T : CharacterAbility
     {
         foreach (CharacterAbility ability in _abilities)
@@ -64,6 +58,7 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
             UI_CharacterStat.Instance.MyCharacter = this;
         }
         _animator = GetComponent<Animator>();
+        ScoreTextUI = GetComponent<TextMeshProUGUI>();
     }
 
     private void Start()
@@ -75,6 +70,11 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
     private Quaternion _receivedRotation;
     private void Update()
     {
+
+        if (ScoreTextUI != null)
+        {
+            ScoreTextUI.text = $"점수: {Score}";
+        }
         float damping = 20f;
 
         if (!PhotonView.IsMine)
@@ -142,6 +142,7 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
             OnDamagedMine();
         }
     }
+
     private void OnDeath(int actorNumber)
     {
         if (actorNumber >= 0)
@@ -183,16 +184,38 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
         GetComponent<CharacterAttackAbility>().InActiveCollider();
 
 
+
         // 죽고나서 5초후 리스폰
         if (PhotonView.IsMine)
         {
-            // 팩토리패턴: 
-            ItemObjectFactory.Instance.RequestCreate(ItemType.HealthPotion, transform.position);
-            ItemObjectFactory.Instance.RequestCreate(ItemType.StaminaPotion, transform.position);
+            DropItems();
 
             StartCoroutine(Death_Coroutine());
         }
     }
+
+
+    private void DropItems()
+    {
+        int randomValue = UnityEngine.Random.Range(0, 100);
+        if (randomValue > 30)      // 70%
+        {
+            int randomCount = UnityEngine.Random.Range(10, 20);
+            for (int i = 0; i < randomCount; ++i)
+            {
+                ItemObjectFactory.Instance.RequestCreate(ItemType.ScoreItem, transform.position);
+            }
+        }
+        else if (randomValue > 10) // 20%
+        {
+            ItemObjectFactory.Instance.RequestCreate(ItemType.HealthPotion, transform.position);
+        }
+        else                       // 10%
+        {
+            ItemObjectFactory.Instance.RequestCreate(ItemType.StaminaPotion, transform.position);
+        }
+    }
+
 
     private IEnumerator Death_Coroutine()
     {

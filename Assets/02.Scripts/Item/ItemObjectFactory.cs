@@ -27,6 +27,14 @@ public class ItemObjectFactory : MonoBehaviourPun
         }
     }
 
+
+    [PunRPC]
+    private void Create(ItemType type, Vector3 position)
+    {
+        Vector3 dropPos = position + new Vector3(0, 0.5f, 0f) + UnityEngine.Random.insideUnitSphere;
+        PhotonNetwork.InstantiateRoomObject(type.ToString(), dropPos, Quaternion.identity);
+    }
+
     public void RequestDelete(int viewID)
     {
         if (PhotonNetwork.IsMasterClient)
@@ -38,12 +46,8 @@ public class ItemObjectFactory : MonoBehaviourPun
             photonView.RPC(nameof(Delete), RpcTarget.MasterClient, viewID);
         }
     }
-    [PunRPC]
-    private void Create(ItemType type, Vector3 position)
-    {
-        Vector3 dropPos = position + new Vector3(0, 0.5f, 0f) + UnityEngine.Random.insideUnitSphere;
-        PhotonNetwork.InstantiateRoomObject(type.ToString(), dropPos, Quaternion.identity);
-    }
+
+
     [PunRPC]
     private void Delete(int viewID)
     {

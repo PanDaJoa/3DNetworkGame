@@ -11,17 +11,33 @@ public class ItemObject : MonoBehaviourPun
     public ItemType ItemType;
     public float Value = 100;
 
+    public ItemType type;
+    private void Start()
+    {
+        if (photonView.IsMine)
+        {
+            Rigidbody rigidbody = GetComponent<Rigidbody>();
+            Vector3 randomVector = UnityEngine.Random.insideUnitSphere;
+            randomVector.y = 1f;
+            randomVector.Normalize();
+            randomVector *= UnityEngine.Random.Range(3, 5f);
+            rigidbody.AddForce(randomVector, ForceMode.Impulse);
+        }
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             Character character = other.GetComponent<Character>();
+
             if (!character.PhotonView.IsMine || character.State == State.Death)
             {
                 return;
             }
 
-            switch(ItemType)
+            character.GetComponent<CharacterEffectAbility>().RequestPlay((int)ItemType);
+
+            switch (ItemType)
             {
                 case ItemType.HealthPotion: 
                 {
@@ -41,6 +57,12 @@ public class ItemObject : MonoBehaviourPun
                     }                    
                     break;
                 }
+                case ItemType.ScoreItem:
+                {
+                    character.Score += (int)Value;
+                    break;
+                }
+
 
             }
             gameObject.SetActive(false);
