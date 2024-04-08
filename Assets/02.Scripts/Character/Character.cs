@@ -1,5 +1,6 @@
 using Cinemachine;
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,11 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
     public PhotonView PhotonView { get; private set; }
     public Stat Stat;
     public State State { get; private set; } = State.Live;
+
+    private Vector3 _receivedPosition;
+    private Quaternion _receivedRotation;
+
+    private int _halfScore;
 
     public State GetState()
     {
@@ -53,28 +59,52 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
         Stat.Init();
         PhotonView = GetComponent<PhotonView>();
         impulseSource = GetComponent<CinemachineImpulseSource>();
-        if (PhotonView.IsMine)
-        {
-            UI_CharacterStat.Instance.MyCharacter = this;
-        }
+
         _animator = GetComponent<Animator>();
-        ScoreTextUI = GetComponent<TextMeshProUGUI>();
     }
 
     private void Start()
     {
+        if (PhotonView.IsMine)
+        {
+            UI_CharacterStat.Instance.MyCharacter = this;
+        }
+        if (!PhotonView.IsMine)
+        {
+            return;
+        }
         SetRandomPositionAndRotation();
+
+        ExitGames.Client.Photon.Hashtable hashtable = new ExitGames.Client.Photon.Hashtable();
+        hashtable.Add("Score", 0);
+        hashtable.Add("KillCount", 0);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
     }
 
-    private Vector3 _receivedPosition;
-    private Quaternion _receivedRotation;
+    [PunRPC]
+    public void AddPropertyIntValue(string key, int value)
+    {
+        ExitGames.Client.Photon.Hashtable myHashtable = PhotonNetwork.LocalPlayer.CustomProperties;
+        myHashtable[key] = (int)myHashtable[key] + value;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(myHashtable);
+        GetComponent<CharacterAttackAbility>().RefreshWeaponScale();
+    }
+    public void SetPropertyIntValue(string key, int value)
+    {
+        ExitGames.Client.Photon.Hashtable myHashtable = PhotonNetwork.LocalPlayer.CustomProperties;
+        myHashtable[key] = value;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(myHashtable);
+        GetComponent<CharacterAttackAbility>().RefreshWeaponScale();
+
+    }
+    public int GetPropertyIntValue(string key)
+    {
+        ExitGames.Client.Photon.Hashtable myHashtable = PhotonNetwork.LocalPlayer.CustomProperties;
+        return (int)myHashtable[key];
+    }
+
     private void Update()
     {
-
-        if (ScoreTextUI != null)
-        {
-            ScoreTextUI.text = $"점수: {Score}";
-        }
         float damping = 20f;
 
         if (!PhotonView.IsMine)
@@ -145,17 +175,28 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
 
     private void OnDeath(int actorNumber)
     {
+        _halfScore = GetPropertyIntValue("Score") / 2;
+
+        // 죽으면 점수를 0점으로 변경
+        SetPropertyIntValue("Score", 0);
+
         if (actorNumber >= 0)
         {
+            // 로그 메시지를 생성하여 모든 클라이언트에게 전달
             string nickname = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber).NickName;
-            string logMessage = $"\n{nickname}님이 {PhotonView.Owner.NickName}을 처치하였습니다.";
+            string logMessage = $"\n<color=#FF00FF>{nickname}</color>님이 <color=#0000FF>{PhotonView.Owner.NickName}</color>을 처치하였습니다 !";
             PhotonView.RPC(nameof(AddLog), RpcTarget.All, logMessage);
+
+            Player targetPlayer = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
+            PhotonView.RPC(nameof(AddPropertyIntValue), targetPlayer, "Score", _halfScore);
+            PhotonView.RPC(nameof(AddPropertyIntValue), targetPlayer, "KillCount", 1);
         }
         else
         {
-            string logMessage = $"\n{PhotonView.Owner.NickName}이 운명을 다했습니다.";
+            string logMessage = $"\n<color=#B40404>{PhotonView.Owner.NickName}이 운명을 다했습니다.</color>";
             PhotonView.RPC(nameof(AddLog), RpcTarget.All, logMessage);
         }
+
     }
 
     private void OnDamagedMine()
@@ -194,16 +235,29 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged, IState
         }
     }
 
-
     private void DropItems()
-    {
+    {/*- 70%: Player 스크립트에 점수가 있고 먹으면 점수가 1점씩 오른다. (3~5개 랜덤 생성)
+            - (score 변수는 일단 Character에 생성)
+        - 20%: 먹으면 체력이 꽉차는 아이템 1개
+            - 10%: 먹으면 스태미나 꽉차는 아이템 1개*/
+        // 팩토리패턴: 객체 생성과 사용 로직을 분리해서 캡슐화하는 패턴
         int randomValue = UnityEngine.Random.Range(0, 100);
         if (randomValue > 30)      // 70%
         {
-            int randomCount = UnityEngine.Random.Range(10, 20);
-            for (int i = 0; i < randomCount; ++i)
+            int randomCount100 = _halfScore / 100;
+            int randomCount50 = _halfScore % 100 / 50;
+            int randomCount20 = _halfScore % 100 % 50 / 20;
+            for (int i = 0; i < randomCount100; ++i)
             {
-                ItemObjectFactory.Instance.RequestCreate(ItemType.ScoreItem, transform.position);
+                ItemObjectFactory.Instance.RequestCreate(ItemType.ScoreItem100, transform.position);
+            }
+            for (int i = 0; i < randomCount50; ++i)
+            {
+                ItemObjectFactory.Instance.RequestCreate(ItemType.ScoreItem50, transform.position);
+            }
+            for (int i = 0; i < randomCount20; ++i)
+            {
+                ItemObjectFactory.Instance.RequestCreate(ItemType.ScoreItem20, transform.position);
             }
         }
         else if (randomValue > 10) // 20%

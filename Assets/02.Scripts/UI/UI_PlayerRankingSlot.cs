@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class UI_PlayerRankingSlot : MonoBehaviour
@@ -17,7 +18,16 @@ public class UI_PlayerRankingSlot : MonoBehaviour
     {
         RankingTextUI.text = "1";
         NicknameTextUI.text = player.NickName;
-        KillCountTextUI.text = "10";
-        ScoreTextUI.text = "10000";
-    }
+        if (player.CustomProperties != null)
+        {
+            KillCountTextUI.text = $"{player.CustomProperties["KillCount"]}";
+            ScoreTextUI.text = $"{player.CustomProperties["Score"]}";
+        }
+        else
+        {
+            KillCountTextUI.text = "0";
+            ScoreTextUI.text = "0";
+        }
+
+    }   
 }

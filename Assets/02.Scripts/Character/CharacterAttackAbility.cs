@@ -20,6 +20,16 @@ public class CharacterAttackAbility : CharacterAbility
     private float _attackTimer = 0;
 
     public Collider WeaponCollider;
+    public GameObject WeaponObject;
+
+    public void RefreshWeaponScale()
+    {
+        int Score = _owner.GetPropertyIntValue("Score");
+        float scale = 1f;
+        scale += Score / 1000 * 0.1f;
+
+        WeaponObject.transform.localScale = new Vector3(scale, scale, scale);
+    }
 
     public CharacterController _characterController;
 

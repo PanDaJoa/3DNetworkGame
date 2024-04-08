@@ -5,15 +5,17 @@ TagManager:
   serializedVersion: 2
   tags:
   - FollowCamera
+  - PatrolPoint
+  - BearSpawnPoint
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Test
   - Water
   - UI
-  - 
-  - 
+  - Player
+  - PlayerDetect
   - 
   - 
   - 

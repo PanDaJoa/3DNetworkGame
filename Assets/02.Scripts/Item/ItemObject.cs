@@ -9,9 +9,8 @@ public class ItemObject : MonoBehaviourPun
 {
     [Header("아이템 타입")]
     public ItemType ItemType;
-    public float Value = 100;
+    public float Value;
 
-    public ItemType type;
     private void Start()
     {
         if (photonView.IsMine)
@@ -34,13 +33,16 @@ public class ItemObject : MonoBehaviourPun
             {
                 return;
             }
-
-            character.GetComponent<CharacterEffectAbility>().RequestPlay((int)ItemType);
+            //int a = (int)ItemType;
+            //if (a >= 2)
+            //    a = 2;
+            //character.GetComponent<CharacterEffectAbility>().RequestPlay(a);
 
             switch (ItemType)
             {
                 case ItemType.HealthPotion: 
                 {
+            character.GetComponent<CharacterEffectAbility>().RequestPlay(0);
                     character.Stat.Health += (int)Value;
                     if (character.Stat.Health >= character.Stat.MaxHealth)
                     {
@@ -50,6 +52,7 @@ public class ItemObject : MonoBehaviourPun
                 }
                 case ItemType.StaminaPotion:
                 {
+            character.GetComponent<CharacterEffectAbility>().RequestPlay(1);
                     character.Stat.Stamina += Value;
                     if (character.Stat.Stamina >= character.Stat.MaxStamina)
                     {
@@ -57,11 +60,15 @@ public class ItemObject : MonoBehaviourPun
                     }                    
                     break;
                 }
-                case ItemType.ScoreItem:
+                case ItemType.ScoreItem100:
+                case ItemType.ScoreItem50:
+                case ItemType.ScoreItem20:
                 {
-                    character.Score += (int)Value;
+            character.GetComponent<CharacterEffectAbility>().RequestPlay(2);
+                    character.AddPropertyIntValue("Score", (int)Value);
                     break;
                 }
+
 
 
             }

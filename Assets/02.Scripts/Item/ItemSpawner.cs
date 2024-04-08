@@ -46,12 +46,17 @@ public class ItemSpawner : MonoBehaviour
             // 3. 랜덤한 개수를 정하고
             _createCount = Random.Range(MinCreateCount, MaxCreateCount);
             // 4. 랜덤한 근처 위치에 생성한다.
-            Vector3 randomPosition = new Vector3(Random.Range(-10, 10), 1, Random.Range(-10, 10));
-            randomPosition += transform.position;
+            ItemType[] itemTypes = { ItemType.ScoreItem100, ItemType.ScoreItem50, ItemType.ScoreItem20 };
 
-            ItemObject itemObject = ItemObjectFactory.Instance.MasterCreate(ItemType.ScoreItem, randomPosition);
-            _items.Add(itemObject);
-            itemObject.transform.SetParent(transform);
+            foreach (ItemType itemType in itemTypes)
+            {
+                Vector3 randomPosition = new Vector3(Random.Range(-10, 10), 1, Random.Range(-10, 10)) + transform.position;
+
+                ItemObject itemObject = ItemObjectFactory.Instance.MasterCreate(itemType, randomPosition);
+                _items.Add(itemObject);
+
+                itemObject.transform.SetParent(transform);
+            }
 
             // 5. 생성할 시간을 다시 랜덤...
             _currentTime = 0f;
