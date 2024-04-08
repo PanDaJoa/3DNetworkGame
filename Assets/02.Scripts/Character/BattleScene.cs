@@ -27,7 +27,7 @@ public class BattleScene : MonoBehaviourPunCallbacks
             Init();
         }
     }
-
+    
     public override void OnJoinedRoom()
     {
         if (!_init)
@@ -35,25 +35,26 @@ public class BattleScene : MonoBehaviourPunCallbacks
             Init();
         }
     }
-
+    
     public void Init()
     {
         _init = true;
-
+        
         PhotonNetwork.Instantiate(nameof(Character), Vector3.zero, Quaternion.identity);
-
+        
         if (!PhotonNetwork.IsMasterClient)
         {
             return;
         }
-
+        
         GameObject[] points = GameObject.FindGameObjectsWithTag("BearSpawnPoint");
         foreach (GameObject point in points)
         {
             PhotonNetwork.InstantiateRoomObject("Bear", point.transform.position, Quaternion.identity);
         }
     }
-
-
-
+    
+    
+    
 }
+   

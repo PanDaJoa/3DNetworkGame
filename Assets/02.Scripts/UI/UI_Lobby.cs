@@ -18,6 +18,7 @@ public class UI_Lobby : MonoBehaviour
 {
     public TMP_InputField[] inputField;
 
+
     // 클릭 이벤트 핸들러
     public void OnPointerClick(int _num)
     {
@@ -41,6 +42,8 @@ public class UI_Lobby : MonoBehaviour
 
         PhotonNetwork.NickName = nickname;
         PhotonNetwork.JoinOrCreateRoom(roomID, null, TypedLobby.Default);
+
+
     }
         
 }
